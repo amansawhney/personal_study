@@ -37,8 +37,19 @@ int main(int argc, char *argv[])
     {
     case 0:
         std::cout << i << std::endl;
-        break;
+        break; //needed to break out the block and not continue executing code
     default:
         std::cout << "hello" << std::endl;
     }
+
+    //for loop
+
+    for (auto count = 0; count < 10; count++)
+    {
+        if (count % 2 == 1)
+            continue;
+        std::cout << count << std::endl;
+    }
+
+    return 0;
 }
