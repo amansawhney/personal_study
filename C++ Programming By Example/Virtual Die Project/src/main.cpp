@@ -1,12 +1,24 @@
 #include <iostream>
 #include <random>
+#include <cstdio>
+
+class Dice
+{
+public:
+	int get_roll();
+
+public:
+	std::random_device rd;
+	std::uniform_int_distribution<int> dice_gen = std::uniform_int_distribution<int>(1, 6);
+};
+
+int Dice::get_roll()
+{
+	return this->dice_gen(this->rd);
+}
 
 int main()
 {
-	std::random_device random_device;
-	std::default_random_engine random_eng(random_device());
-	std::uniform_int_distribution<int> dice_gen(1, 6);
-
-	int random_int = dice_gen(random_eng);
-	std::cout << random_int << std::endl;
+	Dice d;
+	std::printf("Your roll is %i", d.get_roll());
 }
