@@ -29,7 +29,7 @@ double generate_standard_normal(int number_of_iterations) {
 }
 
 double sample_from_normal(double mean, double var) {
-	return (generate_standard_normal(100)*var + mean);	
+	return (generate_standard_normal(24)*var + mean);	
 }
 
 bool explore() {
@@ -65,7 +65,7 @@ void update_q(double *q) {
 }
 
 double reward_for_action(double *q, int action) {
-	return generate_standard_normal(100) + q[action];
+	return generate_standard_normal(24) + q[action];
 }
 
 int main() {
