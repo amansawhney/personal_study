@@ -2,6 +2,8 @@
 	This is a program to solve exercise 2.5. It will preform an experiment involving a non-stationary k-banditis problem. 
 	We will have a 10-armed bandit problem where q_*(a) start out equal and then each take a random walk. We will use 
 	two methods: sample averaging and one where the step size is fixed to alpha=0.1. In addition, we will use epsilon=0.1. 
+	Aman Sawhney
+	12/30/20
 */
 
 #include <stdlib.h>
