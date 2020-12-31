@@ -29,7 +29,7 @@ double generate_standard_normal(int number_of_iterations) {
 }
 
 double sample_from_normal(double mean, double var) {
-	return (generate_standard_normal(24)*var + mean);	
+	return (generate_standard_normal(12)*var + mean);	
 }
 
 bool explore() {
@@ -65,23 +65,38 @@ void update_q(double *q) {
 }
 
 double reward_for_action(double *q, int action) {
-	return generate_standard_normal(24) + q[action];
+	return generate_standard_normal(12) + q[action];
+}
+
+void run_one_trial(int steps, double * acc_array) {
+	double q[10] = {0}, constant_step_q[10] = {0}, standard_q[10] = {0};
+	int standard_action, constant_action, best_action;
+	for(int i = 0; i < steps; i++) {
+                update_q(q);
+                standard_action = pick_action(standard_q);
+                standard_q[standard_action] = standard_q[standard_action] + (reward_for_action(q, standard_action) - standard_q[standard_action]) / (i+1);
+                constant_action = pick_action(constant_step_q);
+                constant_step_q[constant_action] =  constant_step_q[constant_action] + ALPHA * (reward_for_action(q, constant_action) - constant_step_q[constant_action]);
+                best_action = get_max_index(q);
+                if(standard_action == best_action) { acc_array[0] += 1.0/steps; }
+                if(constant_action == best_action) { acc_array[1] += 1.0/steps; }
+        }
+
 }
 
 int main() {
 	srand(time(NULL));
-	double q[10] = {0}, constant_step_q[10] = {0}, standard_q[10] = {0}, acc_standard = 0.0, acc_constant = 0.0;
-	int standard_action, constant_action, best_action;
-	for(int i = 0; i < 5000000; i++) {
-		update_q(q);
-		standard_action = pick_action(standard_q);
-		standard_q[standard_action] = standard_q[standard_action] + (reward_for_action(q, standard_action) - standard_q[standard_action]) / (i+1);
-		constant_action = pick_action(constant_step_q);
-		constant_step_q[constant_action] =  constant_step_q[constant_action] + ALPHA * (reward_for_action(q, constant_action) - constant_step_q[constant_action]);
-		best_action = get_max_index(q);
-		if(standard_action == best_action) { acc_standard++; }
-		if(constant_action == best_action) { acc_constant++; }
-		if(i % 10000 == 0) { printf("The standard acc is %lf and the const acc is %lf \n", acc_standard/i, acc_constant/i); }
+	int num_of_runs = 100;
+	for(int s = 0; s <= 10000; s += 100) {
+		double acc_accray[2] = {0};
+		for(int b = 0; b < num_of_runs; b++) {
+			double trail_acc[2] = {0};
+			run_one_trial(s, trail_acc);
+			acc_accray[0] += trail_acc[0] / (num_of_runs);
+			acc_accray[1] += trail_acc[1] / (num_of_runs);
+		} 
+		printf("After %d steps we have a standard acc of %lf and a const acc of %lf \n", s, acc_accray[0], acc_accray[1]);
+
 	}
 	return 0;
 }
