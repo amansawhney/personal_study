@@ -20,7 +20,7 @@ double get_uniform_random() {
 }
 
 double generate_standard_normal(int number_of_iterations) {
-	// This funciton will use CLT to generate a standard normal
+	// Uses CLT to generate a standard normal
 	double normal = 0;
 	for(int i =0; i < number_of_iterations; i++) {
 		normal += get_uniform_random();
@@ -33,10 +33,12 @@ double sample_from_normal(double mean, double var) {
 }
 
 bool explore() {
+	// Samples from a uniform to determine if one should explore or exploit the current policy
 	return (get_uniform_random() < EPSILON) ? true : false;
 }
 
 int get_max_index(double *q) {
+	// Finds largest index of array of doubles
 	int index = 0;
 	double max = q[0];
 	for(int i = 0; i < 10; i++) {
@@ -49,26 +51,24 @@ int get_max_index(double *q) {
 }
 
 int pick_action(double *q) {
-	int action;
-	if(explore()) {
-		return (int)(get_uniform_random()*10);
-	}
-	else {
-		return get_max_index(q);
-	}
+	// Given a value function, this picks an explotive or explorative action
+	return (explore()) ? (int)(get_uniform_random()*10) : get_max_index(q);
 }
 
 void update_q(double *q) {
+	// Progresses q along the random walk for the value, where the steps are sampled from N(0, 0.01)
 	for(int j = 0; j < 10; j++) {
 		q[j] += sample_from_normal(0, 0.01);
 	}
 }
 
 double reward_for_action(double *q, int action) {
+	// Gets the reward for any action with a noise of N(0,1)
 	return generate_standard_normal(12) + q[action];
 }
 
 void run_one_trial(int steps, double * acc_array) {
+	// Runs one experiment of s steps
 	double q[10] = {0}, constant_step_q[10] = {0}, standard_q[10] = {0};
 	int standard_action, constant_action, best_action;
 	for(int i = 0; i < steps; i++) {
@@ -88,7 +88,9 @@ int main() {
 	srand(time(NULL));
 	int num_of_runs = 100;
 	for(int s = 0; s <= 10000; s += 100) {
+		// Iterates through each possible number of steps
 		double acc_accray[2] = {0};
+		// Runs a seperate experiement for the inputed number of indp runs
 		for(int b = 0; b < num_of_runs; b++) {
 			double trail_acc[2] = {0};
 			run_one_trial(s, trail_acc);
